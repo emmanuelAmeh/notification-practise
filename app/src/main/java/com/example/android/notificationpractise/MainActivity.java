@@ -7,6 +7,8 @@ import androidx.core.app.NotificationManagerCompat;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -47,13 +49,20 @@ public class MainActivity extends AppCompatActivity {
         broadcastIntent.putExtra("toastMessage", text);
         PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadcastIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+        //To add big icon
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.three_men_solution);
+
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_one)
                 .setContentTitle(title)
+                .setLargeIcon(largeIcon)
 //                //to show text in one line
                 .setContentText(text)
                 //to show text in more than one line
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(text)
+                        .setBigContentTitle("This is the Big Content Title")
+                        .setSummaryText("This is the summary Test"))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setColor(Color.GREEN)
@@ -76,6 +85,18 @@ public class MainActivity extends AppCompatActivity {
                 .setSmallIcon(R.drawable.ic_two)
                 .setContentTitle(title)
                 .setContentText(text)
+                .setStyle(new NotificationCompat.InboxStyle()
+                .addLine("This is line 1")
+                        .addLine("This is line 1")
+                        .addLine("This is line 2")
+                        .addLine("This is line 3")
+                        .addLine("This is line 4")
+                        .addLine("This is line 5")
+                        .addLine("This is line 6")
+                        .addLine("This is line 7")
+                .setBigContentTitle("Big Content " +
+                        "title")
+                .setSummaryText("Summary Text"))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .build();
         mNotificationManager.notify(2, notification);
