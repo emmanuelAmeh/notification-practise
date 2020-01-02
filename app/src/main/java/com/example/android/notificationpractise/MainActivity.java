@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.view.View;
 import android.widget.EditText;
 
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private NotificationManagerCompat mNotificationManager;
     private EditText mEditTextTitle;
     private EditText mEditTextMessage;
+    private MediaSessionCompat mMediaSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         mNotificationManager = NotificationManagerCompat.from(this);
         mEditTextTitle = findViewById(R.id.edit_text_title);
         mEditTextMessage = findViewById(R.id.edit_text_message);
+        mMediaSession = new MediaSessionCompat(this, "tag");
+
     }
 
     public void sendOnChannel1(View view) {
@@ -42,27 +46,20 @@ public class MainActivity extends AppCompatActivity {
         Intent activityIntent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
 
-        //To show an action bar which you can use to carry out an action in your app when clicked using broadcast receivers
-        //create the class NotificationReceiver
-        //don't forget to add the broadcast receiver to manifest
-        Intent broadcastIntent = new Intent(this, NotificationReceiver.class);
-        broadcastIntent.putExtra("toastMessage", text);
-        PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadcastIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         //To add big icon
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.three_men_solution);
+        Bitmap picture = BitmapFactory.decodeResource(getResources(), R.drawable.three_men_solution);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_one)
                 .setContentTitle(title)
-                .setLargeIcon(largeIcon)
-//                //to show text in one line
+                //to show text in one line
                 .setContentText(text)
                 //to show text in more than one line
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(text)
-                        .setBigContentTitle("This is the Big Content Title")
-                        .setSummaryText("This is the summary Test"))
+                .setLargeIcon(picture)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(picture)
+                        .bigLargeIcon(null))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setColor(Color.GREEN)
@@ -70,33 +67,32 @@ public class MainActivity extends AppCompatActivity {
                 .setContentIntent(contentIntent)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true)
-                //adding the broadcast receivers, here and manifest
-                .addAction(R.mipmap.ic_launcher, "Toast", actionIntent)
                 .build();
 
         mNotificationManager.notify(1, notification);
     }
 
     public void sendOnChannel2(View view) {
-        String title = mEditTextTitle.getText().toString();
-        String text = mEditTextMessage.getText().toString();
+        String album = mEditTextTitle.getText().toString();
+        String song = mEditTextMessage.getText().toString();
+
+        //To add big icon
+        Bitmap artwork = BitmapFactory.decodeResource(getResources(), R.drawable.three_men_solution);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_two)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setStyle(new NotificationCompat.InboxStyle()
-                .addLine("This is line 1")
-                        .addLine("This is line 1")
-                        .addLine("This is line 2")
-                        .addLine("This is line 3")
-                        .addLine("This is line 4")
-                        .addLine("This is line 5")
-                        .addLine("This is line 6")
-                        .addLine("This is line 7")
-                .setBigContentTitle("Big Content " +
-                        "title")
-                .setSummaryText("Summary Text"))
+                .setContentTitle(album)
+                .setContentText(song)
+                .setLargeIcon(artwork)
+                .addAction(R.drawable.ic_dislike, "dislike", null)
+                .addAction(R.drawable.ic_previous, "previous", null)
+                .addAction(R.drawable.ic_play, "play", null)
+                .addAction(R.drawable.ic_next, "next", null)
+                .addAction(R.drawable.ic_like, "like", null)
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(1, 2, 3)
+                        .setMediaSession(mMediaSession.getSessionToken()))
+                .setSubText("Sub Text")
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .build();
         mNotificationManager.notify(2, notification);
