@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Notification Practise</string>
+    <string name="channel_name_1">Channel 1</string>
+    <string name="channel_description">This is for High importance</string>
+    <string name="channel_description_2">This is for Low importance</string>
+    <string name="channel_name_2">Channel 2</string>
+</resources>
